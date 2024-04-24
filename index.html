@@ -40,7 +40,7 @@
                     alert("Donnée ajoutée")
                 }
             });
-            xhr.open("POST", "https://qualite.onrender.com:3000/api/addRow");
+            xhr.open("POST", "https://qualite.onrender.com/api/addRow");
             xhr.setRequestHeader("content-type", "application/json")
             xhr.send(data);
             author.value = ''
@@ -155,7 +155,7 @@
                 const ecarttype = Math.sqrt(variance / avg.length)
                 createList(ulEct, liHE, liVE, ecarttype, "Ecart-Type", "Total")
             });
-            xhr.open("GET", "https://qualite.onrender.com:3000/api/getAll")
+            xhr.open("GET", "https://qualite.onrender.com/api/getAll")
             xhr.send()
         }
 
