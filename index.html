@@ -15,6 +15,7 @@
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
     <script>
+        let JsonData = [];
         function sendData() {
             const xhr = new XMLHttpRequest();
             const author = document.getElementById("txt")
@@ -40,7 +41,7 @@
                     alert("Donnée ajoutée")
                 }
             });
-            xhr.open("POST", "https://qualite.onrender.com/api/addRow");
+            xhr.open("POST", "http://localhost:3000/api/addRow");
             xhr.setRequestHeader("content-type", "application/json")
             xhr.send(data);
             author.value = ''
@@ -62,7 +63,11 @@
                     const trH = document.createElement("tr")
                     const tBody = document.createElement('tbody')
                     const tid = document.createElement("th")
-
+                    let temp = {
+                        "author": "",
+                        "date": "",
+                        "size": 0
+                    }
                     tid.scope = 'col'
                     tid.className = "title"
                     tid.innerText = "#"
@@ -85,10 +90,11 @@
                         th.scope = 'row'
                         th.innerText = e.id
                         tableRow.appendChild(th)
-
                         for (let i = 0; i < Object.keys(dataObj).length; i++) {
                             const td = document.createElement("td")
                             const value = values[i]
+                            const headerS = Object.keys(dataObj)[i]
+                            temp[headerS] = value 
                             td.className = `${e.data.author}-${Object.keys(dataObj)[i]}`
                             td.innerText = value
                             tableRow.appendChild(td)
@@ -106,8 +112,19 @@
                                 users.find(({ name }) => name.toUpperCase() === user).size.push(parseFloat(e.data.size))
                             }
 
+
                             if (Object.keys(e.data)[i] == 'size')
                                 avg.push(parseFloat(value))
+                            
+                            if(Object.keys(e.data)[i] == "date"){
+                                JsonData.push(temp)
+                                temp = {
+                                    "author": "",
+                                    "date": "",
+                                    "size": 0
+                                }
+                            }
+                                
                         }
                         tBody.appendChild(tableRow)
                     })
@@ -154,8 +171,10 @@
 
                 const ecarttype = Math.sqrt(variance / avg.length)
                 createList(ulEct, liHE, liVE, ecarttype, "Ecart-Type", "Total")
+                console.log(JsonData)
+                
             });
-            xhr.open("GET", "https://qualite.onrender.com/api/getAll")
+            xhr.open("GET", "http://localhost:3000/api/getAll")
             xhr.send()
         }
 
@@ -169,6 +188,43 @@
             ul.replaceChildren(liH, liV)
         }
 
+        function JsonToCsv(items) {
+            const header = Object.keys(items[0]); 
+            const headerString = header.join(',');  // handle null or undefined values here
+            const replacer = (key, value) => value ?? ''; 
+            const rowItems = items.map((row) =>
+                header
+                    .map((fieldName) => JSON.stringify(row[fieldName], replacer))
+                    .join(',')
+            );  // join header and body, and break into separate lines
+            const csv = [headerString, ...rowItems].join('\r\n'); 
+            save("data", csv)
+        }
+
+        function save(filename, data) {
+            const blob = new Blob([data], {type: 'text/csv'});
+            if(window.navigator.msSaveOrOpenBlob) {
+                window.navigator.msSaveBlob(blob, filename);
+            }
+            else{
+                const button = window.document.createElement("button")
+                const elem = window.document.createElement('a');
+                elem.href = window.URL.createObjectURL(blob);
+                elem.download = filename;        
+                button.appendChild(elem);
+                elem.click();        
+                button.removeChild(elem);
+            }
+        }
+
+        function removeData(id) {
+            const xhr = new XMLHttpRequest();
+            xhr.addEventListener("readystatechange", function () {
+                console.log('Oui')
+            })
+            xhr.open("DELETE", `http://localhost:3000/api/deleteRow/${id}`)
+            xhr.send(data);
+        }
     </script>
 
     <div class="card" style="margin-top:50px">
@@ -195,6 +251,7 @@
             <thead></thead>
         </table>
         <button type="button" onclick="createTable()" class="btn btn-primary">Recu</button>
+        <button type="button" onclick="JsonToCsv(JsonData)" class="btn btn-secondary">Download</button>
     </div>
 
     <div style="margin-top: 50px; display:flex; margin-bottom:50px">

@@ -32,7 +32,6 @@ function getAll(){
   return jsonData
 }
 
-
 // Renvoie un event spécifique
 function getRow(id) {
   if (typeof id == "string")
