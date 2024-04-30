@@ -41,7 +41,7 @@
                     alert("Donnée ajoutée")
                 }
             });
-            xhr.open("POST", "http://localhost:3000/api/addRow");
+            xhr.open("POST", "http://qualite.onrender.com/api/addRow");
             xhr.setRequestHeader("content-type", "application/json")
             xhr.send(data);
             author.value = ''
@@ -174,7 +174,7 @@
                 console.log(JsonData)
                 
             });
-            xhr.open("GET", "http://localhost:3000/api/getAll")
+            xhr.open("GET", "http://qualite.onrender.com/api/getAll")
             xhr.send()
         }
 
@@ -215,15 +215,6 @@
                 elem.click();        
                 button.removeChild(elem);
             }
-        }
-
-        function removeData(id) {
-            const xhr = new XMLHttpRequest();
-            xhr.addEventListener("readystatechange", function () {
-                console.log('Oui')
-            })
-            xhr.open("DELETE", `http://localhost:3000/api/deleteRow/${id}`)
-            xhr.send(data);
         }
     </script>
 
