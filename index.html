@@ -41,7 +41,7 @@
                     alert("Donnée ajoutée")
                 }
             });
-            xhr.open("POST", "http://qualite.onrender.com/api/addRow");
+            xhr.open("POST", "https://qualite.onrender.com/api/addRow");
             xhr.setRequestHeader("content-type", "application/json")
             xhr.send(data);
             author.value = ''
@@ -174,7 +174,7 @@
                 console.log(JsonData)
                 
             });
-            xhr.open("GET", "http://qualite.onrender.com/api/getAll")
+            xhr.open("GET", "https://qualite.onrender.com/api/getAll")
             xhr.send()
         }
 
